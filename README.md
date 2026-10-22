@@ -4,9 +4,9 @@
 
 OpenPulse helps developers explore GitHub projects, discover beginner-friendly issues, and track open-source contributions — making it easier to start and grow in open source.
 
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ea4aaa?logo=github-sponsors)](https://github.com/sponsors/Dinesh-vaish)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Early%20Development-orange)]()
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 ---
 
@@ -25,9 +25,9 @@ Finding your first open-source contribution is hard. OpenPulse solves this by:
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React + TypeScript |
-| Backend | Python + FastAPI |
-| Database | PostgreSQL |
+| Frontend | React + TypeScript (planned) |
+| Backend | Python + FastAPI (planned) |
+| Database | PostgreSQL (planned) |
 | Integration | GitHub REST API |
 | Infra | Docker + GitHub Actions |
 
@@ -35,32 +35,36 @@ Finding your first open-source contribution is hard. OpenPulse solves this by:
 
 ## Roadmap
 
+See [ROADMAP.md](ROADMAP.md) for the full version-by-version plan.
+
 - [x] Project concept and architecture
-- [ ] GitHub API integration — fetch repos and issues
-- [ ] PostgreSQL schema — store contributions and users
-- [ ] FastAPI backend — REST endpoints
-- [ ] React frontend — search and filter UI
-- [ ] Contribution tracker dashboard
+- [x] Working MVP with live GitHub API
+- [x] Language filter, search, sort
+- [ ] Backend API with caching
+- [ ] Contribution tracker
+- [ ] GitHub OAuth login
+- [ ] React + TypeScript migration
 - [ ] Public launch
 
 ---
 
-## Support This Project
+## Getting Started
 
-OpenPulse is free and open source. If you find it useful, consider sponsoring to help keep development active.
+Open `index.html` in a browser to explore the frontend demo.
 
-Your sponsorship helps with:
-- Server and hosting costs
-- Dedicated development time
-- Building features the community needs
+Or run a local server:
 
-[![Sponsor OpenPulse](https://img.shields.io/badge/Sponsor%20OpenPulse-%E2%9D%A4-ea4aaa?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Dinesh-vaish)
+```sh
+npx serve .
+```
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Check the Issues tab for available tasks.
+Contributions are welcome. Check the [Issues](../../issues) tab for tasks labeled `good first issue`.
+
+Read [CONTRIBUTING.md](.github/CONTRIBUTING.md) before opening a PR.
 
 ---
 
