@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OpenPulse — Find Your First Open Source Issue</title>
+  <meta name="description" content="Discover beginner-friendly GitHub issues. Filter by language and start contributing to open source today." />
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <i class="fas fa-bolt"></i>
+        Open<span>Pulse</span>
+      </div>
+      <div class="nav-links">
+        <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank">
+          <i class="fab fa-github"></i> Star on GitHub
+        </a>
+        <a href="https://github.com/sponsors/Dinesh-vaish" target="_blank" class="btn-sponsor">
+          <i class="fas fa-heart"></i> Sponsor
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge"><i class="fas fa-code-branch"></i> Open Source Discovery</div>
+      <h1>Find Your First<br/><span>Open Source Issue</span></h1>
+      <p>Browse real <strong>good first issues</strong> from GitHub. Filter by language, search by topic, and start contributing today.</p>
+      <div class="hero-stats" id="heroStats">
+        <div class="stat-pill"><i class="fas fa-spinner fa-spin"></i> Loading live data...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH & FILTERS -->
+  <section class="filters-section">
+    <div class="container">
+      <div class="search-bar">
+        <i class="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by repo name, topic, or keyword..."
+          autocomplete="off"
+        />
+        <button id="clearSearch" class="clear-btn" title="Clear search">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Language</label>
+          <div class="lang-filters" id="langFilters">
+            <button class="lang-btn active" data-lang="">All</button>
+            <button class="lang-btn" data-lang="python"><span class="dot py"></span>Python</button>
+            <button class="lang-btn" data-lang="javascript"><span class="dot js"></span>JavaScript</button>
+            <button class="lang-btn" data-lang="typescript"><span class="dot ts"></span>TypeScript</button>
+            <button class="lang-btn" data-lang="go"><span class="dot go"></span>Go</button>
+            <button class="lang-btn" data-lang="rust"><span class="dot rs"></span>Rust</button>
+            <button class="lang-btn" data-lang="java"><span class="dot java"></span>Java</button>
+            <button class="lang-btn" data-lang="c++"><span class="dot cpp"></span>C++</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>Sort By</label>
+          <select id="sortSelect" class="sort-select">
+            <option value="created">Newest First</option>
+            <option value="updated">Recently Updated</option>
+            <option value="comments">Most Discussed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results-section">
+    <div class="container">
+      <div class="results-header">
+        <span id="resultsCount" class="results-count">Loading issues...</span>
+        <button id="refreshBtn" class="refresh-btn" title="Refresh">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+
+      <!-- Issue Cards Grid -->
+      <div class="issues-grid" id="issuesGrid">
+        <!-- Skeleton loaders -->
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+      <!-- Load More -->
+      <div class="load-more-wrap">
+        <button id="loadMoreBtn" class="btn-load-more" style="display:none;">
+          <i class="fas fa-arrow-down"></i> Load More Issues
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-search"></i>
+        <h3>No issues found</h3>
+        <p>Try a different keyword or language filter.</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state" id="errorState" style="display:none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3>GitHub API limit reached</h3>
+        <p>GitHub allows 60 requests/hour for unauthenticated users. Please try again in a few minutes.</p>
+        <button onclick="App.init()" class="btn-retry"><i class="fas fa-redo"></i> Retry</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo"><i class="fas fa-bolt"></i> Open<span>Pulse</span></div>
+      <p>Built with ❤️ for the open source community</p>
+      <div class="footer-links">
+        <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+        <a href="https://github.com/sponsors/Dinesh-vaish" target="_blank"><i class="fas fa-heart"></i> Sponsor</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
