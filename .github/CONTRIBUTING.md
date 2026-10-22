@@ -1,19 +1,19 @@
 # Contributing to OpenPulse
 
-Thank you for your interest in contributing! 🎉
+Thank you for your interest in contributing.
 
 ## How to Contribute
 
-1. **Fork** this repository
-2. **Create a branch** — `git checkout -b feat/your-feature`
-3. **Make your changes**
-4. **Commit** — `git commit -m "feat: describe your change"`
-5. **Push** — `git push origin feat/your-feature`
-6. **Open a Pull Request** against `main`
+1. Fork this repository
+2. Create a branch — `git checkout -b feat/your-feature`
+3. Make your changes
+4. Commit — `git commit -m "feat: describe your change"`
+5. Push — `git push origin feat/your-feature`
+6. Open a Pull Request against `main`
 
 ## What to Work On
 
-Check the [Issues](../../issues) tab for open tasks labeled `good first issue`.
+Check the Issues tab for open tasks labeled `good first issue`.
 
 ## Code Style
 
