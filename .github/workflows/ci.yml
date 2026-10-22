@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend — Lint and Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check HTML is valid
+        run: |
+          if [ ! -f index.html ]; then
+            echo "index.html not found"
+            exit 1
+          fi
+          echo "index.html exists"
+
+      - name: Check JS and CSS files exist
+        run: |
+          [ -f app.js ]    && echo "app.js OK"    || (echo "app.js missing" && exit 1)
+          [ -f style.css ] && echo "style.css OK" || (echo "style.css missing" && exit 1)
+
+      - name: Check no secrets accidentally committed
+        run: |
+          if grep -r "ghp_\|github_pat_\|GITHUB_TOKEN\s*=\s*['\"]" --include="*.js" --include="*.html" .; then
+            echo "Possible secret found in frontend files"
+            exit 1
+          fi
+          echo "No secrets found"

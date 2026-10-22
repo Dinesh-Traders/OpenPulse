@@ -10,18 +10,18 @@ OpenPulse helps developers explore GitHub projects, discover beginner-friendly i
 
 ---
 
-## 💡 What is OpenPulse?
+## What is OpenPulse?
 
 Finding your first open-source contribution is hard. OpenPulse solves this by:
 
-- 🔍 Searching GitHub projects by language, topic, or difficulty
-- 🏷️ Surfacing **beginner-friendly issues** tagged `good first issue`
-- 📊 Tracking your contribution history across repos
-- 🚀 Helping maintainers attract the right contributors
+- Searching GitHub projects by language, topic, or difficulty
+- Surfacing beginner-friendly issues tagged `good first issue`
+- Tracking your contribution history across repos
+- Helping maintainers attract the right contributors
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -33,37 +33,37 @@ Finding your first open-source contribution is hard. OpenPulse solves this by:
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [x] Project concept & architecture
-- [ ] GitHub API integration — fetch repos & issues
-- [ ] PostgreSQL schema — store contributions & users
+- [x] Project concept and architecture
+- [ ] GitHub API integration — fetch repos and issues
+- [ ] PostgreSQL schema — store contributions and users
 - [ ] FastAPI backend — REST endpoints
-- [ ] React frontend — search & filter UI
+- [ ] React frontend — search and filter UI
 - [ ] Contribution tracker dashboard
 - [ ] Public launch
 
 ---
 
-## 💖 Support This Project
+## Support This Project
 
 OpenPulse is free and open source. If you find it useful, consider sponsoring to help keep development active.
 
-**Your sponsorship helps with:**
-- 🖥️ Server & hosting costs
-- ⏱️ Dedicated development time
-- 🌍 Building features the community needs
+Your sponsorship helps with:
+- Server and hosting costs
+- Dedicated development time
+- Building features the community needs
 
 [![Sponsor OpenPulse](https://img.shields.io/badge/Sponsor%20OpenPulse-%E2%9D%A4-ea4aaa?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Dinesh-vaish)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-Contributions are welcome! Check the [Issues](../../issues) tab for available tasks.
+Contributions are welcome. Check the Issues tab for available tasks.
 
 ---
 
-## 📄 License
+## License
 
 MIT © [Dinesh Kumar Vaishya](https://github.com/Dinesh-vaish)
