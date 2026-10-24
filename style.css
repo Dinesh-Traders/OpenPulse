@@ -789,3 +789,77 @@ input, select, textarea { font-family: var(--font); }
   outline-offset: 2px;
   border-radius: 3px;
 }
+
+/* ===== AUTH STYLES ===== */
+.btn-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #fff;
+  background: #24292f;
+  border: 1px solid #24292f;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.btn-login:hover {
+  background: #32383f;
+  box-shadow: var(--shadow-sm);
+}
+.btn-login:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-2);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  padding: 5px 12px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.12s;
+}
+.btn-logout:hover {
+  color: var(--red);
+  border-color: var(--red-border);
+  background: var(--red-bg);
+}
+
+/* Supabase redirect URL add karo */
+@media (max-width: 480px) {
+  .user-name { display: none; }
+  .btn-login { padding: 7px 12px; font-size: 12.5px; }
+}
