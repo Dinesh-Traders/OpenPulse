@@ -152,7 +152,13 @@ const App = (() => {
     }
 
     const frag = document.createDocumentFragment();
-    issues.forEach(issue => frag.appendChild(buildCard(issue)));
+    issues.forEach(issue => {
+      try {
+        frag.appendChild(buildCard(issue));
+      } catch (e) {
+        console.warn('[OpenPulse] card build failed:', e.message, issue);
+      }
+    });
     grid.appendChild(frag);
   }
 
