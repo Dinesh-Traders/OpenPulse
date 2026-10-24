@@ -110,6 +110,7 @@ const App = (() => {
 
     try {
       allIssues = await fetchIssues(activeLang, activeSort);
+      console.log('[OpenPulse] fetched:', allIssues.length, 'total_count:', totalCount);
       page = 1;
       applyFilters();
       renderHeroStats();
@@ -325,8 +326,11 @@ const App = (() => {
 
   // ===== HELPERS =====
   function repoSlug(issue) {
-    const parts = (issue.repository_url || '').split('/');
-    return `${parts[parts.length - 2] || ''}/${parts[parts.length - 1] || ''}`;
+    const url   = issue.repository_url || issue.url || '';
+    const parts = url.split('/');
+    const owner = parts[parts.length - 2] || 'unknown';
+    const repo  = parts[parts.length - 1] || 'unknown';
+    return `${owner}/${repo}`;
   }
 
   function labelClass(name) {
