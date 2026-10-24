@@ -68,17 +68,17 @@ const App = (() => {
     let q = `is:issue is:open label:"${LABEL}"`;
     if (lang) q += ` language:${lang}`;
 
-    // In production: proxied through /api/issues (token stays server-side)
-    // In local dev (file://): falls back to direct GitHub API
-    const isLocal = location.protocol === 'file:' ||
-                    location.hostname === 'localhost' ||
-                    location.hostname === '127.0.0.1';
+    // Always use direct GitHub API — /api/issues proxy only on Vercel production
+    const isVercel = location.hostname !== 'localhost' &&
+                     location.hostname !== '127.0.0.1' &&
+                     location.protocol !== 'file:' &&
+                     !location.hostname.includes('::');
 
-    const url = isLocal
-      ? `https://api.github.com/search/issues` +
-        `?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${PER_PAGE}`
-      : `/api/issues` +
-        `?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${PER_PAGE}`;
+    const base = isVercel
+      ? `/api/issues`
+      : `https://api.github.com/search/issues`;
+
+    const url = `${base}?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${PER_PAGE}`;
 
     const res = await fetch(url, {
       headers: { 'Accept': 'application/vnd.github+json' },
