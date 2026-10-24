@@ -6,43 +6,48 @@
   <meta name="theme-color" content="#2563EB" />
   <title>OpenPulse — Find Beginner-Friendly GitHub Issues</title>
   <meta name="description" content="Discover real good first issues from GitHub. Filter by language, search by topic, and start contributing to open source today." />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <!-- Lucide icons via CDN -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <!-- ===== NAVBAR ===== -->
   <header class="navbar" role="banner">
     <div class="nav-inner">
+
+      <!-- Logo -->
       <a href="/" class="nav-logo" aria-label="OpenPulse home">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
         </svg>
         <span>OpenPulse</span>
       </a>
+
+      <!-- Desktop nav -->
       <nav class="nav-links" aria-label="Site navigation">
-        <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank" rel="noopener noreferrer" class="nav-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-          Star on GitHub
+        <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank" rel="noopener noreferrer" class="nav-link nav-github" aria-label="Star OpenPulse on GitHub">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="nav-link-text">Star</span>
         </a>
 
-        <!-- Auth buttons — shown/hidden by auth.js -->
-        <div id="authButtons">
-          <button id="loginBtn" class="btn-login" aria-label="Sign in">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-            Sign in with GitHub
-          </button>
+        <!-- Login button (logged out) -->
+        <button id="loginBtn" class="btn-login" aria-label="Sign in with GitHub">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span class="btn-login-text">Sign in</span>
+        </button>
 
-          <!-- User menu — shown when logged in -->
-          <div id="userMenu" class="user-menu" hidden>
-            <img id="userAvatar" class="user-avatar" src="" alt="Profile" width="32" height="32"/>
-            <span id="userName" class="user-name"></span>
-            <button id="logoutBtn" class="btn-logout" aria-label="Sign out">Sign out</button>
-          </div>
+        <!-- User menu (logged in) — hidden by default -->
+        <div id="userMenu" class="user-menu" hidden>
+          <img id="userAvatar" class="user-avatar" src="" alt="" width="30" height="30" />
+          <span id="userName" class="user-name"></span>
+          <button id="logoutBtn" class="btn-logout" aria-label="Sign out">
+            Sign out
+          </button>
         </div>
       </nav>
+
     </div>
   </header>
 
@@ -50,88 +55,90 @@
   <section class="hero" aria-labelledby="hero-heading">
     <div class="container">
       <div class="hero-eyebrow">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
         Live from GitHub API
       </div>
-      <h1 id="hero-heading">Find your first<br><span class="hero-accent">open source issue</span></h1>
+      <h1 id="hero-heading">Find your first <span class="hero-accent">open source issue</span></h1>
       <p class="hero-sub">Browse real <strong>good first issues</strong> from GitHub. Filter by language, search by keyword, and start contributing today.</p>
-      <div class="hero-stats" id="heroStats" aria-live="polite">
+      <div class="hero-stats" id="heroStats" aria-live="polite" aria-atomic="true">
         <div class="stat-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span class="stat-loading">Loading...</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span class="stat-loading">Loading live data...</span>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== FILTERS ===== -->
-  <section class="filters-bar" aria-label="Search and filter issues">
+  <div class="filters-bar" role="search" aria-label="Filter issues">
     <div class="container">
-      <!-- Search -->
+
+      <!-- Search input -->
       <div class="search-wrap">
         <label for="searchInput" class="sr-only">Search issues</label>
-        <svg class="search-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <svg class="search-ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input
           type="search"
           id="searchInput"
           class="search-input"
-          placeholder="Search by repo name or keyword..."
+          placeholder="Search by repo or keyword..."
           autocomplete="off"
           spellcheck="false"
-          aria-label="Search issues"
         />
         <button id="clearSearch" class="search-clear" aria-label="Clear search" hidden>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- Filter row -->
+      <!-- Filter controls -->
       <div class="filter-row">
+
+        <!-- Language pills -->
         <div class="filter-group" role="group" aria-label="Filter by language">
-          <span class="filter-label">Language</span>
+          <span class="filter-label" aria-hidden="true">Language</span>
           <div class="lang-pills" id="langFilters">
             <button class="pill active" data-lang="" aria-pressed="true">All</button>
-            <button class="pill" data-lang="python" aria-pressed="false"><span class="lang-dot" style="background:#4B8BBE"></span>Python</button>
-            <button class="pill" data-lang="javascript" aria-pressed="false"><span class="lang-dot" style="background:#F7DF1E"></span>JavaScript</button>
-            <button class="pill" data-lang="typescript" aria-pressed="false"><span class="lang-dot" style="background:#3178C6"></span>TypeScript</button>
-            <button class="pill" data-lang="go" aria-pressed="false"><span class="lang-dot" style="background:#29BEB0"></span>Go</button>
-            <button class="pill" data-lang="rust" aria-pressed="false"><span class="lang-dot" style="background:#CE422B"></span>Rust</button>
-            <button class="pill" data-lang="java" aria-pressed="false"><span class="lang-dot" style="background:#E76F00"></span>Java</button>
-            <button class="pill" data-lang="c++" aria-pressed="false"><span class="lang-dot" style="background:#9C4221"></span>C++</button>
+            <button class="pill" data-lang="python"     aria-pressed="false"><span class="lang-dot" style="background:#4B8BBE" aria-hidden="true"></span>Python</button>
+            <button class="pill" data-lang="javascript" aria-pressed="false"><span class="lang-dot" style="background:#F7DF1E" aria-hidden="true"></span>JavaScript</button>
+            <button class="pill" data-lang="typescript" aria-pressed="false"><span class="lang-dot" style="background:#3178C6" aria-hidden="true"></span>TypeScript</button>
+            <button class="pill" data-lang="go"         aria-pressed="false"><span class="lang-dot" style="background:#29BEB0" aria-hidden="true"></span>Go</button>
+            <button class="pill" data-lang="rust"       aria-pressed="false"><span class="lang-dot" style="background:#CE422B" aria-hidden="true"></span>Rust</button>
+            <button class="pill" data-lang="java"       aria-pressed="false"><span class="lang-dot" style="background:#E76F00" aria-hidden="true"></span>Java</button>
+            <button class="pill" data-lang="c++"        aria-pressed="false"><span class="lang-dot" style="background:#9C4221" aria-hidden="true"></span>C++</button>
           </div>
         </div>
 
-        <div class="filter-group">
-          <label class="filter-label" for="sortSelect">Sort</label>
-          <select id="sortSelect" class="sort-select" aria-label="Sort issues">
-            <option value="created">Newest first</option>
-            <option value="updated">Recently updated</option>
-            <option value="comments">Most discussed</option>
-          </select>
-        </div>
-
-        <div class="filter-actions">
-          <button id="refreshBtn" class="btn-ghost" aria-label="Refresh issues">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-            Refresh
+        <!-- Sort + Refresh -->
+        <div class="filter-right">
+          <div class="filter-group">
+            <label class="filter-label" for="sortSelect">Sort</label>
+            <select id="sortSelect" class="sort-select">
+              <option value="created">Newest first</option>
+              <option value="updated">Recently updated</option>
+              <option value="comments">Most discussed</option>
+            </select>
+          </div>
+          <button id="refreshBtn" class="btn-ghost" aria-label="Refresh issues" title="Refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            <span class="btn-ghost-text">Refresh</span>
           </button>
         </div>
+
       </div>
     </div>
-  </section>
+  </div>
 
   <!-- ===== RESULTS ===== -->
   <main class="results-section" id="main-content">
     <div class="container">
 
-      <!-- Results header -->
       <div class="results-header">
         <p class="results-count" id="resultsCount" aria-live="polite" aria-atomic="true">Loading issues...</p>
       </div>
 
-      <!-- Issue grid -->
+      <!-- Cards -->
       <div class="issues-grid" id="issuesGrid" role="list" aria-label="GitHub issues">
-        <div class="skeleton-card" role="status" aria-label="Loading"></div>
+        <div class="skeleton-card" role="status" aria-label="Loading issues"></div>
         <div class="skeleton-card" aria-hidden="true"></div>
         <div class="skeleton-card" aria-hidden="true"></div>
         <div class="skeleton-card" aria-hidden="true"></div>
@@ -141,8 +148,8 @@
 
       <!-- Load more -->
       <div class="load-more-wrap">
-        <button id="loadMoreBtn" class="btn-outline" style="display:none">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <button id="loadMoreBtn" class="btn-outline" style="display:none" aria-label="Load more issues">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
           Load more issues
         </button>
       </div>
@@ -150,7 +157,7 @@
       <!-- Empty state -->
       <div class="state-box" id="emptyState" hidden role="status">
         <div class="state-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </div>
         <h2 class="state-title">No issues found</h2>
         <p class="state-body">Try a different keyword or change the language filter.</p>
@@ -159,12 +166,12 @@
       <!-- Error state -->
       <div class="state-box" id="errorState" hidden role="alert">
         <div class="state-icon state-icon--error">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
         </div>
         <h2 class="state-title" id="errorTitle">Could not load issues</h2>
         <p class="state-body" id="errorBody">Something went wrong. Please try again.</p>
         <button onclick="App.init()" class="btn-primary" style="margin-top:16px">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
           Try again
         </button>
       </div>
@@ -175,15 +182,17 @@
   <!-- ===== FOOTER ===== -->
   <footer class="footer" role="contentinfo">
     <div class="container footer-inner">
-      <span class="footer-copy">OpenPulse &copy; 2026 &mdash; Built for the open source community</span>
-      <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label="View OpenPulse on GitHub">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub
-      </a>
+      <span class="footer-copy">&copy; 2026 OpenPulse &mdash; Built for the open source community</span>
+      <div class="footer-links">
+        <a href="https://github.com/Dinesh-Traders/OpenPulse" target="_blank" rel="noopener noreferrer" class="footer-link" aria-label="View OpenPulse on GitHub">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
     </div>
   </footer>
 
-  <!-- Supabase JS client -->
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
