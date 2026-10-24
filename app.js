@@ -1,26 +1,26 @@
 /* =============================================
    OpenPulse — app.js
-   GitHub Good First Issue Finder
+   Real GitHub Good First Issue Finder
    ============================================= */
 
 const App = (() => {
 
   // ===== CONFIG =====
-  const LABELS = ['good first issue', 'good-first-issue', 'beginner', 'easy', 'starter'];
+  // One label per fetch — most issues only have ONE of these labels
+  const LABEL = 'good first issue';
   const PER_PAGE = 30;
   const DEBOUNCE_MS = 400;
 
-  // Language color map (matching GitHub)
   const LANG_COLORS = {
-    python:     '#3572A5',
-    javascript: '#f1e05a',
-    typescript: '#2b7489',
-    go:         '#00ADD8',
-    rust:       '#dea584',
-    java:       '#b07219',
-    'c++':      '#f34b7d',
-    ruby:       '#701516',
-    php:        '#4F5D95',
+    python:     '#4B8BBE',
+    javascript: '#F7DF1E',
+    typescript: '#3178C6',
+    go:         '#29BEB0',
+    rust:       '#CE422B',
+    java:       '#E76F00',
+    'c++':      '#9C4221',
+    ruby:       '#CC342D',
+    php:        '#777BB4',
     swift:      '#F05138',
     kotlin:     '#A97BFF',
     c:          '#555555',
@@ -36,36 +36,37 @@ const App = (() => {
   let isLoading   = false;
 
   // ===== DOM REFS =====
-  const grid         = document.getElementById('issuesGrid');
-  const countEl      = document.getElementById('resultsCount');
-  const emptyEl      = document.getElementById('emptyState');
-  const errorEl      = document.getElementById('errorState');
-  const loadMoreBtn  = document.getElementById('loadMoreBtn');
-  const refreshBtn   = document.getElementById('refreshBtn');
-  const searchInput  = document.getElementById('searchInput');
-  const clearBtn     = document.getElementById('clearSearch');
-  const heroStats    = document.getElementById('heroStats');
-  const sortSelect   = document.getElementById('sortSelect');
+  const grid        = document.getElementById('issuesGrid');
+  const countEl     = document.getElementById('resultsCount');
+  const emptyEl     = document.getElementById('emptyState');
+  const errorEl     = document.getElementById('errorState');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  const refreshBtn  = document.getElementById('refreshBtn');
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn    = document.getElementById('clearSearch');
+  const heroStats   = document.getElementById('heroStats');
+  const sortSelect  = document.getElementById('sortSelect');
 
   // ===== GITHUB API FETCH =====
   async function fetchIssues(lang, sort) {
-    // Build query: label + optional language + sort
-    const labelQuery = LABELS.map(l => `label:"${l}"`).join(' ');
-    const langQuery  = lang ? `+language:${lang}` : '';
-    const q          = `is:issue is:open ${labelQuery}${langQuery}`;
+    // Simple clean query — one label, optional language
+    let q = `is:issue is:open label:"good first issue"`;
+    if (lang) q += ` language:${lang}`;
 
-    const url = `https://api.github.com/search/issues?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${PER_PAGE}`;
+    const url = `https://api.github.com/search/issues` +
+      `?q=${encodeURIComponent(q)}` +
+      `&sort=${sort}&order=desc&per_page=${PER_PAGE}`;
 
     const res = await fetch(url, {
       headers: { 'Accept': 'application/vnd.github+json' }
     });
 
-    if (res.status === 403 || res.status === 429) {
-      throw new Error('rate_limit');
+    // Rate limit
+    if (res.status === 403 || res.status === 422) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.message || 'rate_limit');
     }
-    if (!res.ok) {
-      throw new Error(`GitHub API error: ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
 
     const data = await res.json();
     return data.items || [];
@@ -83,19 +84,15 @@ const App = (() => {
       applyFilters();
       updateHeroStats(allIssues);
     } catch (err) {
-      console.error(err);
-      if (err.message === 'rate_limit') {
-        showError();
-      } else {
-        showError();
-      }
+      console.error('OpenPulse fetch error:', err.message);
+      showError(err.message);
     } finally {
       isLoading = false;
       setLoading(false);
     }
   }
 
-  // ===== FILTER & RENDER =====
+  // ===== FILTER =====
   function applyFilters() {
     const q = searchQuery.toLowerCase().trim();
 
@@ -103,20 +100,20 @@ const App = (() => {
       if (!q) return true;
       const repo  = issue.repository_url?.split('/').slice(-2).join('/').toLowerCase() || '';
       const title = issue.title.toLowerCase();
-      const body  = (issue.body || '').toLowerCase();
-      return title.includes(q) || repo.includes(q) || body.includes(q);
+      return title.includes(q) || repo.includes(q);
     });
 
     renderIssues(filtered.slice(0, page * PER_PAGE));
     updateCount(filtered.length);
-    loadMoreBtn.style.display = filtered.length > page * PER_PAGE ? 'inline-flex' : 'none';
+    loadMoreBtn.style.display =
+      filtered.length > page * PER_PAGE ? 'inline-flex' : 'none';
   }
 
-  // ===== RENDER ISSUE CARDS =====
+  // ===== RENDER CARDS =====
   function renderIssues(issues) {
     grid.innerHTML = '';
-    emptyEl.style.display  = 'none';
-    errorEl.style.display  = 'none';
+    emptyEl.style.display = 'none';
+    errorEl.style.display = 'none';
 
     if (issues.length === 0) {
       emptyEl.style.display = 'block';
@@ -124,61 +121,78 @@ const App = (() => {
       return;
     }
 
-    const fragment = document.createDocumentFragment();
-    issues.forEach(issue => {
-      const card = buildCard(issue);
-      fragment.appendChild(card);
-    });
-    grid.appendChild(fragment);
+    const frag = document.createDocumentFragment();
+    issues.forEach(issue => frag.appendChild(buildCard(issue)));
+    grid.appendChild(frag);
   }
 
-  // ===== BUILD SINGLE CARD =====
+  // ===== BUILD CARD =====
   function buildCard(issue) {
-    // Parse repo owner/name from repository_url
-    const repoParts  = issue.repository_url?.split('/') || [];
-    const repoOwner  = repoParts[repoParts.length - 2] || '';
-    const repoName   = repoParts[repoParts.length - 1] || '';
-    const avatarUrl  = `https://github.com/${repoOwner}.png?size=28`;
-    const lang       = issue.language || detectLang(issue);
-    const langColor  = LANG_COLORS[lang?.toLowerCase()] || '#8b949e';
-    const timeAgo    = getTimeAgo(issue.created_at);
+    const parts     = issue.repository_url?.split('/') || [];
+    const repoOwner = parts[parts.length - 2] || '';
+    const repoName  = parts[parts.length - 1] || '';
+    const avatarUrl = `https://github.com/${repoOwner}.png?size=40`;
 
-    // Build labels HTML
+    // Language from issue labels or detect from title
+    const lang      = detectLang(issue);
+    const langColor = LANG_COLORS[lang?.toLowerCase()] || null;
+    const timeAgo   = getTimeAgo(issue.created_at);
+
+    // Labels — skip generic ones, show meaningful ones
+    const skipLabels = new Set(['good first issue','good-first-issue','help wanted']);
     const labelsHtml = (issue.labels || [])
-      .slice(0, 4)
+      .filter(l => !skipLabels.has(l.name.toLowerCase()))
+      .slice(0, 3)
       .map(lbl => {
-        const cls = getLabelClass(lbl.name);
+        const cls   = getLabelClass(lbl.name);
         const color = lbl.color ? `#${lbl.color}` : null;
-        const style = color ? `style="background:${color}22; border-color:${color}66; color:${color}"` : '';
+        const style = color
+          ? `style="background:${color}18;border-color:${color}55;color:${color}"`
+          : '';
         return `<span class="label ${cls}" ${style}>${escHtml(lbl.name)}</span>`;
       }).join('');
 
+    // Always show "good first issue" badge
+    const gfiBadge = `<span class="label label-gfi">good first issue</span>`;
+
     const card = document.createElement('a');
-    card.className  = 'issue-card';
-    card.href       = issue.html_url;
-    card.target     = '_blank';
-    card.rel        = 'noopener noreferrer';
+    card.className = 'issue-card';
+    card.href      = issue.html_url;
+    card.target    = '_blank';
+    card.rel       = 'noopener noreferrer';
 
     card.innerHTML = `
       <div class="card-top">
         <div class="repo-info">
-          <img class="repo-avatar" src="${avatarUrl}" alt="${repoOwner}" loading="lazy"
-               onerror="this.src='https://github.com/github.png?size=28'"/>
-          <span class="repo-name"><strong>${escHtml(repoOwner)}</strong> / ${escHtml(repoName)}</span>
+          <img class="repo-avatar"
+               src="${avatarUrl}"
+               alt="${escHtml(repoOwner)}"
+               loading="lazy"
+               onerror="this.style.display='none'"/>
+          <span class="repo-name">
+            <strong>${escHtml(repoOwner)}</strong> / ${escHtml(repoName)}
+          </span>
         </div>
         <span class="issue-number">#${issue.number}</span>
       </div>
+
       <div class="issue-title">${escHtml(issue.title)}</div>
-      <div class="issue-labels">${labelsHtml}</div>
+
+      <div class="issue-labels">
+        ${gfiBadge}
+        ${labelsHtml}
+      </div>
+
       <div class="card-footer">
         <div class="card-meta">
-          <span><i class="fas fa-comment"></i> ${issue.comments}</span>
+          <span><i class="fas fa-comment-alt"></i> ${issue.comments}</span>
           <span><i class="fas fa-clock"></i> ${timeAgo}</span>
         </div>
-        ${lang ? `<span class="lang-tag">
-          <span class="dot" style="background:${langColor}"></span>
-          ${escHtml(lang)}
-        </span>` : ''}
+        ${lang && langColor ? `
+          <span class="lang-tag">
+            <span class="dot" style="background:${langColor}"></span>
+            ${escHtml(lang)}
+          </span>` : ''}
       </div>
     `;
 
@@ -189,71 +203,101 @@ const App = (() => {
   function updateHeroStats(issues) {
     const repos = new Set(issues.map(i => i.repository_url)).size;
     heroStats.innerHTML = `
-      <div class="stat-pill"><i class="fas fa-bug"></i> <span class="num">${issues.length}+</span> open issues</div>
-      <div class="stat-pill"><i class="fas fa-code-branch"></i> <span class="num">${repos}</span> repositories</div>
-      <div class="stat-pill"><i class="fas fa-heart" style="color:#db61a2"></i> beginner friendly</div>
+      <div class="stat-pill">
+        <i class="fas fa-fire"></i>
+        <span class="num">${issues.length}</span> live issues
+      </div>
+      <div class="stat-pill">
+        <i class="fas fa-code-branch"></i>
+        <span class="num">${repos}</span> repos
+      </div>
+      <div class="stat-pill">
+        <i class="fas fa-check-circle"></i> beginner friendly
+      </div>
     `;
   }
 
   // ===== COUNT =====
   function updateCount(total) {
-    const langLabel = activeLang ? ` in ${activeLang}` : '';
-    const qLabel    = searchQuery ? ` for "${searchQuery}"` : '';
+    const langLabel = activeLang ? ` · ${activeLang}` : '';
+    const qLabel    = searchQuery ? ` · "${searchQuery}"` : '';
     countEl.textContent = `${total} issue${total !== 1 ? 's' : ''}${langLabel}${qLabel}`;
   }
 
-  // ===== LOADING STATE =====
+  // ===== LOADING =====
   function setLoading(on) {
     if (on) {
-      grid.innerHTML = Array(6).fill('<div class="skeleton-card"></div>').join('');
-      emptyEl.style.display  = 'none';
-      errorEl.style.display  = 'none';
+      grid.innerHTML =
+        Array(6).fill('<div class="skeleton-card"></div>').join('');
+      emptyEl.style.display     = 'none';
+      errorEl.style.display     = 'none';
       loadMoreBtn.style.display = 'none';
-      countEl.textContent    = 'Loading issues...';
+      countEl.textContent       = 'Fetching live issues from GitHub...';
       refreshBtn.classList.add('spinning');
     } else {
       refreshBtn.classList.remove('spinning');
     }
   }
 
-  // ===== ERROR STATE =====
-  function showError() {
-    grid.innerHTML = '';
-    errorEl.style.display  = 'block';
-    emptyEl.style.display  = 'none';
+  // ===== ERROR =====
+  function showError(msg) {
+    grid.innerHTML            = '';
+    errorEl.style.display     = 'block';
+    emptyEl.style.display     = 'none';
     loadMoreBtn.style.display = 'none';
-    countEl.textContent    = 'Failed to load';
-    heroStats.innerHTML    = '<div class="stat-pill"><i class="fas fa-exclamation-triangle" style="color:#f78166"></i> API limit reached — try again later</div>';
+    countEl.textContent       = 'Could not load';
+
+    const isRateLimit = msg && (
+      msg.includes('rate limit') ||
+      msg.includes('API rate') ||
+      msg.includes('secondary rate')
+    );
+
+    document.querySelector('#errorState h3').textContent =
+      isRateLimit ? 'GitHub API rate limit reached' : 'Could not load issues';
+
+    document.querySelector('#errorState p').textContent =
+      isRateLimit
+        ? 'GitHub allows 60 requests/hour for unauthenticated users. Wait a few minutes and try again.'
+        : 'Something went wrong fetching from GitHub. Check your connection and retry.';
+
+    heroStats.innerHTML = `
+      <div class="stat-pill" style="border-color:rgba(248,113,113,0.3);color:#f87171">
+        <i class="fas fa-exclamation-circle"></i> Failed to load — retry in a few minutes
+      </div>`;
   }
 
   // ===== HELPERS =====
   function getLabelClass(name) {
     const n = name.toLowerCase();
-    if (n.includes('good first') || n.includes('beginner') || n.includes('starter') || n.includes('easy')) return 'label-gfi';
-    if (n.includes('help'))       return 'label-help';
-    if (n.includes('bug'))        return 'label-bug';
-    if (n.includes('doc'))        return 'label-doc';
+    if (n.includes('bug') || n.includes('fix'))  return 'label-bug';
+    if (n.includes('doc'))                        return 'label-doc';
+    if (n.includes('help'))                       return 'label-help';
     return 'label-default';
   }
 
   function detectLang(issue) {
-    // Try to guess language from labels or repo name
-    const text = (issue.title + ' ' + (issue.body || '') + ' ' + (issue.labels || []).map(l => l.name).join(' ')).toLowerCase();
-    for (const lang of Object.keys(LANG_COLORS)) {
-      if (text.includes(lang)) return lang;
-    }
-    return null;
+    // Check labels first (most accurate)
+    const labelLangs = (issue.labels || [])
+      .map(l => l.name.toLowerCase())
+      .find(n => LANG_COLORS[n]);
+    if (labelLangs) return labelLangs;
+
+    // Fallback: scan title
+    const title = issue.title.toLowerCase();
+    return Object.keys(LANG_COLORS).find(l => title.includes(l)) || null;
   }
 
   function getTimeAgo(dateStr) {
-    const diff = Date.now() - new Date(dateStr).getTime();
+    const diff  = Date.now() - new Date(dateStr).getTime();
     const mins  = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days  = Math.floor(diff / 86400000);
-    if (mins < 60)  return `${mins}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 30)  return `${days}d ago`;
-    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (mins  < 60)  return `${mins}m ago`;
+    if (hours < 24)  return `${hours}h ago`;
+    if (days  < 30)  return `${days}d ago`;
+    return new Date(dateStr).toLocaleDateString('en-US',
+      { month: 'short', day: 'numeric' });
   }
 
   function escHtml(str) {
@@ -265,18 +309,15 @@ const App = (() => {
   }
 
   let debounceTimer;
-  function debounce(fn, ms) {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(fn, ms);
-  }
 
-  // ===== EVENT LISTENERS =====
+  // ===== EVENTS =====
   function bindEvents() {
-    // Language filter buttons
+    // Language filters
     document.getElementById('langFilters').addEventListener('click', e => {
       const btn = e.target.closest('.lang-btn');
       if (!btn) return;
-      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.lang-btn')
+        .forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       activeLang = btn.dataset.lang;
       loadIssues();
@@ -288,14 +329,15 @@ const App = (() => {
       loadIssues();
     });
 
-    // Search
+    // Search — filter locally, no extra API call
     searchInput.addEventListener('input', () => {
       searchQuery = searchInput.value;
       clearBtn.classList.toggle('visible', searchQuery.length > 0);
-      debounce(applyFilters, DEBOUNCE_MS);
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(applyFilters, DEBOUNCE_MS);
     });
 
-    // Clear search
+    // Clear
     clearBtn.addEventListener('click', () => {
       searchInput.value = '';
       searchQuery = '';
@@ -313,7 +355,8 @@ const App = (() => {
     loadMoreBtn.addEventListener('click', () => {
       page++;
       renderIssues(filtered.slice(0, page * PER_PAGE));
-      loadMoreBtn.style.display = filtered.length > page * PER_PAGE ? 'inline-flex' : 'none';
+      loadMoreBtn.style.display =
+        filtered.length > page * PER_PAGE ? 'inline-flex' : 'none';
     });
   }
 
@@ -327,5 +370,4 @@ const App = (() => {
 
 })();
 
-// Start the app
 document.addEventListener('DOMContentLoaded', App.init);
