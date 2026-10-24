@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     q,
     sort:     sort     || 'created',
     order:    order    || 'desc',
-    per_page: per_page || '30',
+    per_page: per_page || '100',
   });
 
   const githubUrl = `https://api.github.com/search/issues?${params}`;

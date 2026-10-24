@@ -7,7 +7,8 @@ const App = (() => {
 
   // ===== CONFIG =====
   const LABEL       = 'good first issue';   // single source of truth
-  const PER_PAGE    = 30;
+  const PER_PAGE    = 30;   // cards shown per page (client-side)
+  const API_PER_PAGE = 100; // fetch maximum from GitHub per request
   const DEBOUNCE_MS = 350;
 
   // GitHub linguist color map
@@ -78,7 +79,7 @@ const App = (() => {
       ? `/api/issues`
       : `https://api.github.com/search/issues`;
 
-    const url = `${base}?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${PER_PAGE}`;
+    const url = `${base}?q=${encodeURIComponent(q)}&sort=${sort}&order=desc&per_page=${API_PER_PAGE}`;
 
     const res = await fetch(url, {
       headers: { 'Accept': 'application/vnd.github+json' },
