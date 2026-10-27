@@ -8,6 +8,88 @@ const SUPABASE_KEY = 'sb_publishable_t4mOxvddwoLL7Ggq8OCf4w_ff5CNl5U';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+/* ============================================
+   GOOGLE SHEETS INTEGRATION (commented out)
+   ============================================
+   
+   Ye feature Supabase ke saath simultaneously
+   chal sakta hai — activate karne ke liye:
+   
+   1. Google Apps Script deploy karo as Web App:
+      - script.google.com → New Project
+      - Neeche wala GAS code paste karo
+      - Deploy → Web App → Anyone can access
+      - Web App URL copy karo
+   
+   2. GOOGLE_SHEET_URL variable mein paste karo
+   
+   3. Is pura block ko uncomment karo
+   
+   -----------------------------------------------
+   
+   const GOOGLE_SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+   
+   // User data Google Sheet mein save karo
+   async function saveToGoogleSheet(user, eventType) {
+     try {
+       const payload = {
+         event:      eventType,           // 'signup' ya 'login'
+         email:      user.email || '',
+         username:   user.user_metadata?.user_name || user.user_metadata?.name || '',
+         provider:   user.app_metadata?.provider || 'email',
+         userId:     user.id,
+         timestamp:  new Date().toISOString(),
+       };
+   
+       await fetch(GOOGLE_SHEET_URL, {
+         method:  'POST',
+         mode:    'no-cors',              // Google Apps Script needs this
+         headers: { 'Content-Type': 'application/json' },
+         body:    JSON.stringify(payload),
+       });
+   
+       console.log('[OpenPulse] Google Sheet updated:', eventType);
+     } catch (err) {
+       // Non-blocking — Sheet error should not break auth flow
+       console.warn('[OpenPulse] Google Sheet sync failed:', err.message);
+     }
+   }
+   
+   // -----------------------------------------------
+   // Google Apps Script Code (paste in script.google.com):
+   // -----------------------------------------------
+   //
+   // function doPost(e) {
+   //   try {
+   //     const data   = JSON.parse(e.postData.contents);
+   //     const sheet  = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+   //
+   //     // Add header row if sheet is empty
+   //     if (sheet.getLastRow() === 0) {
+   //       sheet.appendRow(['Timestamp', 'Event', 'Email', 'Username', 'Provider', 'UserID']);
+   //     }
+   //
+   //     sheet.appendRow([
+   //       data.timestamp,
+   //       data.event,
+   //       data.email,
+   //       data.username,
+   //       data.provider,
+   //       data.userId,
+   //     ]);
+   //
+   //     return ContentService
+   //       .createTextOutput(JSON.stringify({ status: 'ok' }))
+   //       .setMimeType(ContentService.MimeType.JSON);
+   //   } catch(err) {
+   //     return ContentService
+   //       .createTextOutput(JSON.stringify({ status: 'error', message: err.message }))
+   //       .setMimeType(ContentService.MimeType.JSON);
+   //   }
+   // }
+   
+   ============================================ */
+
 // ===== DOM REFS =====
 // Navbar
 const navLoginBtn  = document.getElementById('loginBtn');
@@ -390,6 +472,14 @@ async function initAuth() {
       if (session?.user && !authOverlay.hasAttribute('hidden')) {
         closeModal();
       }
+      /* Google Sheets sync — uncomment when GOOGLE_SHEET_URL is set:
+      if (session?.user && _event === 'SIGNED_IN') {
+        saveToGoogleSheet(session.user, 'login');
+      }
+      if (session?.user && _event === 'USER_UPDATED') {
+        saveToGoogleSheet(session.user, 'signup');
+      }
+      */
     });
   } catch (err) {
     console.error('[OpenPulse Auth]', err.message);
