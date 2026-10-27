@@ -1,160 +1,412 @@
 /* ============================================
    OpenPulse — auth.js
-   Supabase Auth — GitHub OAuth
+   Supabase Auth — GitHub OAuth + Email/Password
    ============================================ */
 
 const SUPABASE_URL = 'https://ixhwdzyppbaksacvcvwq.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_t4mOxvddwoLL7Ggq8OCf4w_ff5CNl5U';
 
-// Wait for Supabase CDN to load
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ===== DOM REFS =====
-const loginBtn   = document.getElementById('loginBtn');
-const logoutBtn  = document.getElementById('logoutBtn');
-const userMenu   = document.getElementById('userMenu');
-const userAvatar = document.getElementById('userAvatar');
-const userName   = document.getElementById('userName');
+// Navbar
+const navLoginBtn  = document.getElementById('loginBtn');
+const logoutBtn    = document.getElementById('logoutBtn');
+const userMenu     = document.getElementById('userMenu');
+const userAvatar   = document.getElementById('userAvatar');
+const userName     = document.getElementById('userName');
 
-// GitHub SVG icon string — reused
-const GH_ICON = `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57
-  0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695
-  -.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99
-  .105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225
-  -.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405
-  c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225
-  0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3
-  0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-</svg>`;
+// Modal
+const authOverlay    = document.getElementById('authOverlay');
+const authClose      = document.getElementById('authClose');
+const tabLogin       = document.getElementById('tabLogin');
+const tabSignup      = document.getElementById('tabSignup');
+const panelLogin     = document.getElementById('panelLogin');
+const panelSignup    = document.getElementById('panelSignup');
+const panelForgot    = document.getElementById('panelForgot');
 
-// ===== INIT AUTH =====
-async function initAuth() {
-  try {
-    // Check existing session (handles OAuth redirect automatically)
-    const { data: { session }, error } = await sb.auth.getSession();
+// Login form
+const loginForm      = document.getElementById('loginForm');
+const loginEmail     = document.getElementById('loginEmail');
+const loginPassword  = document.getElementById('loginPassword');
+const loginEmailErr  = document.getElementById('loginEmailErr');
+const loginPwErr     = document.getElementById('loginPwErr');
+const loginMsg       = document.getElementById('loginMsg');
+const loginSubmit    = document.getElementById('loginSubmit');
 
-    if (error) {
-      console.error('[OpenPulse Auth] getSession error:', error.message);
-    }
+// Signup form
+const signupForm        = document.getElementById('signupForm');
+const signupEmail       = document.getElementById('signupEmail');
+const signupPassword    = document.getElementById('signupPassword');
+const signupConfirm     = document.getElementById('signupConfirm');
+const signupEmailErr    = document.getElementById('signupEmailErr');
+const signupPwErr       = document.getElementById('signupPwErr');
+const signupConfirmErr  = document.getElementById('signupConfirmErr');
+const signupMsg         = document.getElementById('signupMsg');
+const signupSubmit      = document.getElementById('signupSubmit');
 
-    renderAuth(session?.user ?? null);
+// Forgot form
+const forgotBtn    = document.getElementById('forgotBtn');
+const backToLogin  = document.getElementById('backToLogin');
+const forgotForm   = document.getElementById('forgotForm');
+const forgotEmail  = document.getElementById('forgotEmail');
+const forgotEmailErr = document.getElementById('forgotEmailErr');
+const forgotMsg    = document.getElementById('forgotMsg');
+const forgotSubmit = document.getElementById('forgotSubmit');
 
-    // Live auth state listener
-    sb.auth.onAuthStateChange((event, session) => {
-      console.log('[OpenPulse Auth] event:', event);
-      renderAuth(session?.user ?? null);
-    });
+// GitHub buttons
+const githubLoginBtn  = document.getElementById('githubLoginBtn');
+const githubSignupBtn = document.getElementById('githubSignupBtn');
 
-  } catch (err) {
-    console.error('[OpenPulse Auth] Init failed:', err.message);
-    // Show login button as fallback
-    showLoginBtn();
-  }
+// =====================
+// MODAL OPEN / CLOSE
+// =====================
+function openModal(tab = 'login') {
+  authOverlay.removeAttribute('hidden');
+  document.body.style.overflow = 'hidden';
+  switchTab(tab);
+  // Focus first input after animation
+  setTimeout(() => {
+    const first = authOverlay.querySelector('input:not([hidden])');
+    first?.focus();
+  }, 250);
 }
 
-// ===== RENDER AUTH STATE =====
-function renderAuth(user) {
-  if (user) {
-    // ---- LOGGED IN ----
-    loginBtn.style.display  = 'none';
-    userMenu.removeAttribute('hidden');
-    userMenu.style.display  = 'flex';
+function closeModal() {
+  authOverlay.setAttribute('hidden', '');
+  document.body.style.overflow = '';
+  clearAllErrors();
+}
 
-    const avatar = user.user_metadata?.avatar_url || '';
-    const name   = user.user_metadata?.user_name   ||
-                   user.user_metadata?.name        ||
-                   user.email?.split('@')[0]       ||
-                   'User';
+// Close on overlay click
+authOverlay?.addEventListener('click', (e) => {
+  if (e.target === authOverlay) closeModal();
+});
 
-    if (avatar) {
-      userAvatar.src = avatar;
-      userAvatar.alt = name;
-      userAvatar.style.display = 'block';
-    } else {
-      userAvatar.style.display = 'none';
-    }
+// Close on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !authOverlay.hasAttribute('hidden')) closeModal();
+});
 
-    userName.textContent = name;
-    console.log('[OpenPulse Auth] Logged in as:', name, '|', user.email);
+authClose?.addEventListener('click', closeModal);
 
+// =====================
+// TABS
+// =====================
+function switchTab(tab) {
+  clearAllErrors();
+
+  if (tab === 'login') {
+    tabLogin.classList.add('active');
+    tabLogin.setAttribute('aria-selected', 'true');
+    tabSignup.classList.remove('active');
+    tabSignup.setAttribute('aria-selected', 'false');
+    panelLogin.removeAttribute('hidden');
+    panelSignup.setAttribute('hidden', '');
+    panelForgot.setAttribute('hidden', '');
   } else {
-    // ---- LOGGED OUT ----
-    showLoginBtn();
+    tabSignup.classList.add('active');
+    tabSignup.setAttribute('aria-selected', 'true');
+    tabLogin.classList.remove('active');
+    tabLogin.setAttribute('aria-selected', 'false');
+    panelSignup.removeAttribute('hidden');
+    panelLogin.setAttribute('hidden', '');
+    panelForgot.setAttribute('hidden', '');
   }
 }
 
-function showLoginBtn() {
-  loginBtn.style.display = 'inline-flex';
-  loginBtn.disabled      = false;
-  loginBtn.innerHTML     = `${GH_ICON}<span class="btn-login-text">Sign in</span>`;
-  userMenu.setAttribute('hidden', '');
-  userMenu.style.display = 'none';
+tabLogin?.addEventListener('click',  () => switchTab('login'));
+tabSignup?.addEventListener('click', () => switchTab('signup'));
+
+// =====================
+// FORGOT PASSWORD PANEL
+// =====================
+forgotBtn?.addEventListener('click', () => {
+  panelLogin.setAttribute('hidden', '');
+  panelForgot.removeAttribute('hidden');
+  forgotEmail.value = loginEmail.value; // pre-fill email
+  forgotEmail.focus();
+});
+
+backToLogin?.addEventListener('click', () => {
+  panelForgot.setAttribute('hidden', '');
+  panelLogin.removeAttribute('hidden');
+});
+
+// =====================
+// SHOW PASSWORD TOGGLE
+// =====================
+document.querySelectorAll('.toggle-pw').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = document.getElementById(btn.dataset.target);
+    if (!target) return;
+    const isText = target.type === 'text';
+    target.type = isText ? 'password' : 'text';
+    btn.setAttribute('aria-label', isText ? 'Show password' : 'Hide password');
+    // Swap icon
+    btn.innerHTML = isText
+      ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`
+      : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  });
+});
+
+// =====================
+// VALIDATION HELPERS
+// =====================
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 }
 
-// ===== GITHUB LOGIN =====
+function setFieldError(el, msg) {
+  el.textContent = msg;
+  // Highlight parent input
+  const input = el.previousElementSibling?.querySelector('input') ||
+                el.previousElementSibling;
+  input?.classList.toggle('error', !!msg);
+}
+
+function setMsg(el, msg, type = 'error') {
+  el.textContent = msg;
+  el.className = `form-msg ${msg ? type : ''}`;
+}
+
+function clearAllErrors() {
+  [loginEmailErr, loginPwErr, loginMsg,
+   signupEmailErr, signupPwErr, signupConfirmErr, signupMsg,
+   forgotEmailErr, forgotMsg].forEach(el => {
+    if (el) { el.textContent = ''; el.className = 'form-msg'; }
+  });
+  document.querySelectorAll('.auth-form input.error')
+    .forEach(i => i.classList.remove('error'));
+}
+
+function setLoading(btn, loading, originalText) {
+  btn.disabled = loading;
+  btn.textContent = loading ? 'Please wait...' : originalText;
+}
+
+// =====================
+// GITHUB OAUTH
+// =====================
 async function loginWithGitHub() {
-  // Show loading state
-  loginBtn.disabled  = true;
-  loginBtn.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-         style="animation:spin 0.7s linear infinite" aria-hidden="true">
-      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-      <path d="M21 3v5h-5"/><path d="M8 16H3v5"/>
-    </svg>
-    <span class="btn-login-text">Signing in...</span>`;
-
   const redirectTo = window.location.origin + window.location.pathname;
-
   const { error } = await sb.auth.signInWithOAuth({
     provider: 'github',
+    options: { redirectTo, scopes: 'read:user user:email' },
+  });
+  if (error) {
+    setMsg(loginMsg, error.message);
+  }
+  // No error = browser redirects to GitHub automatically
+}
+
+githubLoginBtn?.addEventListener('click',  loginWithGitHub);
+githubSignupBtn?.addEventListener('click', loginWithGitHub);
+
+// =====================
+// EMAIL LOGIN
+// =====================
+loginForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAllErrors();
+
+  const email = loginEmail.value.trim();
+  const pw    = loginPassword.value;
+  let valid   = true;
+
+  if (!isValidEmail(email)) {
+    setFieldError(loginEmailErr, 'Enter a valid email address.');
+    valid = false;
+  }
+  if (pw.length < 6) {
+    setFieldError(loginPwErr, 'Password must be at least 6 characters.');
+    valid = false;
+  }
+  if (!valid) return;
+
+  setLoading(loginSubmit, true, 'Sign in');
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+
+  setLoading(loginSubmit, false, 'Sign in');
+
+  if (error) {
+    if (error.message.toLowerCase().includes('invalid')) {
+      setMsg(loginMsg, 'Incorrect email or password. Please try again.');
+    } else if (error.message.toLowerCase().includes('confirm')) {
+      setMsg(loginMsg, 'Please confirm your email before signing in. Check your inbox.');
+    } else {
+      setMsg(loginMsg, error.message);
+    }
+    return;
+  }
+
+  // Success
+  closeModal();
+  renderAuth(data.user);
+});
+
+// =====================
+// EMAIL SIGNUP
+// =====================
+signupForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAllErrors();
+
+  const email   = signupEmail.value.trim();
+  const pw      = signupPassword.value;
+  const confirm = signupConfirm.value;
+  let valid     = true;
+
+  if (!isValidEmail(email)) {
+    setFieldError(signupEmailErr, 'Enter a valid email address.');
+    valid = false;
+  }
+  if (pw.length < 8) {
+    setFieldError(signupPwErr, 'Password must be at least 8 characters.');
+    valid = false;
+  }
+  if (pw !== confirm) {
+    setFieldError(signupConfirmErr, 'Passwords do not match.');
+    valid = false;
+  }
+  if (!valid) return;
+
+  setLoading(signupSubmit, true, 'Create account');
+
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: pw,
     options: {
-      redirectTo,
-      scopes: 'read:user user:email',
+      emailRedirectTo: window.location.origin + window.location.pathname,
     },
   });
 
+  setLoading(signupSubmit, false, 'Create account');
+
   if (error) {
-    console.error('[OpenPulse Auth] OAuth error:', error.message);
-    showLoginBtn();
-    // Show brief error message
-    const errMsg = document.createElement('span');
-    errMsg.style.cssText = 'font-size:12px;color:#DC2626;margin-left:8px';
-    errMsg.textContent = 'Login failed. Try again.';
-    loginBtn.insertAdjacentElement('afterend', errMsg);
-    setTimeout(() => errMsg.remove(), 3000);
+    if (error.message.toLowerCase().includes('already')) {
+      setMsg(signupMsg, 'An account with this email already exists. Try signing in.');
+    } else {
+      setMsg(signupMsg, error.message);
+    }
+    return;
   }
-  // No error = browser redirects to GitHub → comes back with session
+
+  // Supabase sends confirmation email
+  setMsg(signupMsg,
+    'Account created! Check your email to confirm your address before signing in.',
+    'success'
+  );
+  signupForm.reset();
+});
+
+// =====================
+// FORGOT PASSWORD
+// =====================
+forgotForm?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAllErrors();
+
+  const email = forgotEmail.value.trim();
+
+  if (!isValidEmail(email)) {
+    setFieldError(forgotEmailErr, 'Enter a valid email address.');
+    return;
+  }
+
+  setLoading(forgotSubmit, true, 'Send reset link');
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/reset-password',
+  });
+
+  setLoading(forgotSubmit, false, 'Send reset link');
+
+  if (error) {
+    setMsg(forgotMsg, error.message);
+    return;
+  }
+
+  setMsg(forgotMsg,
+    `Reset link sent to ${email}. Check your inbox (and spam folder).`,
+    'success'
+  );
+  forgotForm.reset();
+});
+
+// =====================
+// RENDER AUTH STATE
+// =====================
+function renderAuth(user) {
+  if (user) {
+    // Logged in — show user menu
+    navLoginBtn.style.display = 'none';
+    userMenu.removeAttribute('hidden');
+    userMenu.style.display = 'flex';
+
+    const avatar = user.user_metadata?.avatar_url || '';
+    const name   = user.user_metadata?.user_name  ||
+                   user.user_metadata?.name       ||
+                   user.email?.split('@')[0]      ||
+                   'User';
+
+    userAvatar.src     = avatar;
+    userAvatar.alt     = name;
+    userAvatar.style.display = avatar ? 'block' : 'none';
+    userName.textContent     = name;
+
+  } else {
+    // Logged out — show login button
+    navLoginBtn.style.display = 'inline-flex';
+    userMenu.setAttribute('hidden', '');
+    userMenu.style.display = 'none';
+  }
 }
 
-// ===== LOGOUT =====
-async function logout() {
+// =====================
+// LOGOUT
+// =====================
+logoutBtn?.addEventListener('click', async () => {
   logoutBtn.textContent = 'Signing out...';
   logoutBtn.disabled    = true;
+  await sb.auth.signOut();
+  renderAuth(null);
+  logoutBtn.textContent = 'Sign out';
+  logoutBtn.disabled    = false;
+});
 
-  const { error } = await sb.auth.signOut();
-  if (error) {
-    console.error('[OpenPulse Auth] Logout error:', error.message);
+// =====================
+// INIT
+// =====================
+async function initAuth() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    renderAuth(session?.user ?? null);
+
+    sb.auth.onAuthStateChange((_event, session) => {
+      renderAuth(session?.user ?? null);
+      // Close modal on successful login
+      if (session?.user && !authOverlay.hasAttribute('hidden')) {
+        closeModal();
+      }
+    });
+  } catch (err) {
+    console.error('[OpenPulse Auth]', err.message);
+    renderAuth(null);
   }
-  showLoginBtn();
 }
 
-// ===== EVENTS =====
-loginBtn?.addEventListener('click', loginWithGitHub);
-logoutBtn?.addEventListener('click', logout);
+// Open modal on navbar login button click
+navLoginBtn?.addEventListener('click', () => openModal('login'));
 
-// ===== START =====
 document.addEventListener('DOMContentLoaded', initAuth);
 
-// Export for use in app.js or other modules
+// Export
 window.OpenPulseAuth = {
   sb,
+  openModal,
+  closeModal,
   getUser:    () => sb.auth.getUser(),
   getSession: () => sb.auth.getSession(),
-  isLoggedIn: async () => {
-    const { data: { user } } = await sb.auth.getUser();
-    return !!user;
-  },
 };

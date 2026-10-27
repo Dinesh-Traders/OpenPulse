@@ -192,6 +192,128 @@
     </div>
   </footer>
 
+  <!-- ===== AUTH MODAL ===== -->
+  <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" hidden>
+    <div class="auth-modal">
+
+      <!-- Close -->
+      <button class="auth-close" id="authClose" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+
+      <!-- Logo -->
+      <div class="auth-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span>OpenPulse</span>
+      </div>
+
+      <!-- Tabs: Login / Sign up -->
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab active" id="tabLogin" role="tab" aria-selected="true"  aria-controls="panelLogin">Sign in</button>
+        <button class="auth-tab"        id="tabSignup" role="tab" aria-selected="false" aria-controls="panelSignup">Create account</button>
+      </div>
+
+      <!-- ===== LOGIN PANEL ===== -->
+      <div class="auth-panel" id="panelLogin" role="tabpanel" aria-labelledby="tabLogin">
+
+        <!-- GitHub OAuth -->
+        <button class="btn-oauth btn-github" id="githubLoginBtn" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Continue with GitHub
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <!-- Email Login Form -->
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="loginEmailErr"></span>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">
+              Password
+              <button type="button" class="forgot-link" id="forgotBtn">Forgot password?</button>
+            </label>
+            <div class="input-wrap">
+              <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+              <button type="button" class="toggle-pw" aria-label="Show password" data-target="loginPassword">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-error" id="loginPwErr"></span>
+          </div>
+          <div class="form-msg" id="loginMsg"></div>
+          <button type="submit" class="btn-submit" id="loginSubmit">Sign in</button>
+        </form>
+      </div>
+
+      <!-- ===== SIGNUP PANEL ===== -->
+      <div class="auth-panel" id="panelSignup" role="tabpanel" aria-labelledby="tabSignup" hidden>
+
+        <!-- GitHub OAuth -->
+        <button class="btn-oauth btn-github" id="githubSignupBtn" type="button">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Continue with GitHub
+        </button>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <!-- Email Signup Form -->
+        <form class="auth-form" id="signupForm" novalidate>
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <input type="email" id="signupEmail" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="signupEmailErr"></span>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <div class="input-wrap">
+              <input type="password" id="signupPassword" placeholder="Min. 8 characters" autocomplete="new-password" required minlength="8" />
+              <button type="button" class="toggle-pw" aria-label="Show password" data-target="signupPassword">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-error" id="signupPwErr"></span>
+          </div>
+          <div class="form-group">
+            <label for="signupConfirm">Confirm password</label>
+            <div class="input-wrap">
+              <input type="password" id="signupConfirm" placeholder="Repeat password" autocomplete="new-password" required />
+              <button type="button" class="toggle-pw" aria-label="Show password" data-target="signupConfirm">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <span class="field-error" id="signupConfirmErr"></span>
+          </div>
+          <div class="form-msg" id="signupMsg"></div>
+          <button type="submit" class="btn-submit" id="signupSubmit">Create account</button>
+        </form>
+      </div>
+
+      <!-- ===== FORGOT PASSWORD PANEL ===== -->
+      <div class="auth-panel" id="panelForgot" role="tabpanel" hidden>
+        <button class="back-btn" id="backToLogin" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back to sign in
+        </button>
+        <h2 class="forgot-title">Reset your password</h2>
+        <p class="forgot-sub">Enter your email and we'll send you a reset link.</p>
+        <form class="auth-form" id="forgotForm" novalidate>
+          <div class="form-group">
+            <label for="forgotEmail">Email</label>
+            <input type="email" id="forgotEmail" placeholder="you@example.com" autocomplete="email" required />
+            <span class="field-error" id="forgotEmailErr"></span>
+          </div>
+          <div class="form-msg" id="forgotMsg"></div>
+          <button type="submit" class="btn-submit" id="forgotSubmit">Send reset link</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="auth.js"></script>
